@@ -1,13 +1,26 @@
-name: allurectl 2.24.1 check
+name: allurectl 2.24.1 watch check
 on: workflow_dispatch
 jobs:
   check:
     runs-on: ubuntu-latest
     env:
       ALLURE_ENDPOINT: https://testing.qameta.in
+      ALLURE_PROJECT_ID: "14733"
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      ALLURE_RESULTS: allure-results
+      ALLURE_LAUNCH_NAME: "GitHub check 2.24.1 - #${{ github.run_number }}"
     steps:
       - uses: actions/checkout@v4
-      - run: chmod +x allurectl_linux_amd64
-      - run: ./allurectl_linux_amd64 --version
-      - run: ./allurectl_linux_amd64 launch list --project-id 14733
+        with:
+          repository: cheshi-mantu/py-pytest-allurectl-watch
+          ref: main
+      - name: Download allurectl 2.24.1
+        run: |
+          curl -fsSL -o allurectl https://github.com/cheshi-mantu/allurectl-local-builds/releases/download/2.24.1/allurectl_linux_amd64
+          chmod +x allurectl
+          ./allurectl --version
+      - run: python3 -m pip install pytest pytest-xdist allure-pytest
+      - name: Run tests with allurectl watch
+        run: |
+          ./allurectl watch --size=100 --interval=2s --upload-rate-window=0 --upload-max-files-per-window=1000 --upload-max-requests-per-window=100 --concurrency=20 --http-limit=256 -- pytest tests/single -n 2 || true
+      - run: ./allurectl launch list --project-id 14733
