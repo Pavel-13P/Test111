@@ -1,0 +1,14 @@
+name: allurectl 2.24.1 check
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: allure-framework/setup-allurectl@v1
+        with:
+          allurectl-version: 2.24.1
+          allure-endpoint: https://testing.qameta.in
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: 14733
+      - run: allurectl --version
+      - run: allurectl launch list --project-id 14733
