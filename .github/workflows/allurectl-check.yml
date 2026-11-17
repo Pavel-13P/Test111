@@ -3,12 +3,13 @@ on: workflow_dispatch
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      ALLURE_ENDPOINT: https://testing.qameta.in
+      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     steps:
-      - uses: allure-framework/setup-allurectl@v1
-        with:
-          allurectl-version: 2.24.1
-          allure-endpoint: https://testing.qameta.in
-          allure-token: ${{ secrets.ALLURE_TOKEN }}
-          allure-project-id: 14733
-      - run: allurectl --version
-      - run: allurectl launch list --project-id 14733
+      - name: Download allurectl 2.24.1
+        run: |
+          curl -fsSL https://github.com/allure-framework/allurectl/releases/download/2.24.1/allurectl_linux_amd64 -o allurectl
+          chmod +x allurectl
+      - run: ./allurectl --version
+      - run: ./allurectl launch list --project-id 14733
