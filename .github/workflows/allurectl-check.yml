@@ -7,9 +7,7 @@ jobs:
       ALLURE_ENDPOINT: https://testing.qameta.in
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     steps:
-      - name: Download allurectl 2.24.1
-        run: |
-          curl -fsSL https://github.com/allure-framework/allurectl/releases/download/2.24.1/allurectl_linux_amd64 -o allurectl
-          chmod +x allurectl
-      - run: ./allurectl --version
-      - run: ./allurectl launch list --project-id 14733
+      - uses: actions/checkout@v4
+      - run: chmod +x allurectl_linux_amd64
+      - run: ./allurectl_linux_amd64 --version
+      - run: ./allurectl_linux_amd64 launch list --project-id 14733
